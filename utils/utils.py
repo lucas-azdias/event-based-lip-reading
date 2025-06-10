@@ -11,19 +11,13 @@ DIR_LIST = []
 
 def build_log(args):
     if not args.test:
-        if not args.weights:
-            timestamp = time.strftime('%Y%m%d%H%M', time.localtime(time.time()))
-            log_dir = os.path.join(BASE_DIR, 'log', timestamp)
-            if args.log_dir is not None:
-                log_dir = os.path.join(BASE_DIR, 'log', args.log_dir)
-            DIR_LIST.append(log_dir)
-            if not os.path.exists(log_dir):
-                os.makedirs(log_dir)
-        else:
-            log_dir = os.path.join(BASE_DIR, 'log', args.weights)
-            DIR_LIST.append(log_dir)
-            if not os.path.exists(log_dir):
-                os.makedirs(log_dir)
+        timestamp = time.strftime('%Y%m%d%H%M', time.localtime(time.time()))
+        log_dir = os.path.join(BASE_DIR, 'log', timestamp)
+        if args.log_dir is not None:
+            log_dir = os.path.join(BASE_DIR, 'log', args.log_dir)
+        DIR_LIST.append(log_dir)
+        if not os.path.exists(log_dir):
+            os.makedirs(log_dir)
         log_file = os.path.join(log_dir, 'train_log.txt')
         writer = SummaryWriter(os.path.join(log_dir, 'record'))
     else:
@@ -150,4 +144,3 @@ def compute_each_part_acc(label_pred):
     # print(count_part1, count_part2)
 
     return acc_part1, acc_part2
-

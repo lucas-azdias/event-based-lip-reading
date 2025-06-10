@@ -3,6 +3,16 @@ import torch.nn as nn
 import math
 from torch.amp import autocast
 
+# layers=[2]  # Em ambas as branches
+
+# # LowRateBranch:
+# conv1 -> maxpool -> MFM1 + layer1
+#                   -> concat lateral[2] + avgpool
+
+# # HighRateBranch:
+# conv1 -> maxpool -> l_maxpool
+#          -> layer1 + l_layer1
+
 
 def conv1x3x3(in_planes, out_planes, stride=1):
     """1x3x3 convolution with padding"""
@@ -75,14 +85,11 @@ class ResNet18(nn.Module):
         self.relu = nn.ReLU(inplace=True)
         self.maxpool = nn.MaxPool3d(kernel_size=(1, 3, 3), stride=(1, 2, 2), padding=(0, 1, 1))
         self.se = se
-        self.layer1 = self._make_layer(block, self.base_channel // (1 if self.low_rate else self.alpha), layers[0])
-        self.layer2 = self._make_layer(block, 2 * self.base_channel // (1 if self.low_rate else self.alpha), layers[1], stride=2)
-        self.layer3 = self._make_layer(block, 4 * self.base_channel // (1 if self.low_rate else self.alpha), layers[2], stride=2)
-        self.layer4 = self._make_layer(block, 8 * self.base_channel // (1 if self.low_rate else self.alpha), layers[3], stride=2)
+        self.layer1 = self._make_layer(block, self.base_channel // (1 if self.low_rate else self.alpha), layers[0], stride=2)
 
         self.avgpool = nn.AdaptiveAvgPool2d(1)
         if self.low_rate:
-            self.bn2 = nn.BatchNorm1d(8*self.base_channel + 8*self.base_channel//self.alpha*self.t2s_mul)
+            self.bn2 = nn.BatchNorm1d(self.base_channel + self.base_channel // self.alpha * self.t2s_mul)
         elif self.t2s_mul == 0:
             self.bn2 = nn.BatchNorm1d(16*self.base_channel//self.alpha)
 
@@ -186,12 +193,6 @@ class HighRateBranch(ResNet18):
                                    kernel_size=(ksize, 1, 1), stride=(self.beta, 1, 1), bias=False, padding=(ksize//2, 0, 0))
         self.l_layer1 = nn.Conv3d(self.base_channel//self.alpha, self.base_channel//self.alpha*self.t2s_mul,
                                   kernel_size=(ksize, 1, 1), stride=(self.beta, 1, 1), bias=False, padding=(ksize//2, 0, 0))
-        self.l_layer2 = nn.Conv3d(2*self.base_channel//self.alpha, 2*self.base_channel//self.alpha*self.t2s_mul,
-                                  kernel_size=(ksize, 1, 1), stride=(self.beta, 1, 1), bias=False, padding=(ksize//2, 0, 0))
-        self.l_layer3 = nn.Conv3d(4*self.base_channel//self.alpha, 4*self.base_channel//self.alpha*self.t2s_mul,
-                                  kernel_size=(ksize, 1, 1), stride=(self.beta, 1, 1), bias=False, padding=(ksize//2, 0, 0))
-        self.l_layer4 = nn.Conv3d(8*self.base_channel//self.alpha, 8*self.base_channel//self.alpha*self.t2s_mul,
-                                  kernel_size=(ksize, 1, 1), stride=(self.beta, 1, 1), bias=False, padding=(ksize//2, 0, 0))
         self.init_params()
 
     def forward(self, x):
@@ -206,15 +207,6 @@ class HighRateBranch(ResNet18):
         x = self.layer1(x) # (b, 8, 145, 22, 22)
         laterals.append(self.l_layer1(x)) # (b, 16, 30, 22, 22)
 
-        x = self.layer2(x) # (b, 16, 145, 11, 11)
-        laterals.append(self.l_layer2(x)) # (b, 32, 30, 11, 11)
-
-        x = self.layer3(x) # (b, 32, 145, 6, 6)
-        laterals.append(self.l_layer3(x)) # (b, 64, 30, 6, 6)
-
-        x = self.layer4(x) # (b, 64, 145, 3, 3)
-        laterals.append(self.l_layer4(x))
-
         return x, laterals
 
 
@@ -224,13 +216,7 @@ class LowRateBranch(ResNet18):
         self.base_channel = kargs['base_channel']
         self.alpha = kargs['alpha']
         self.mfm1 = MFM(in_channel=self.base_channel + self.base_channel // self.alpha * self.t2s_mul,
-                        out_channel=self.base_channel)
-        self.mfm2 = MFM(in_channel=self.base_channel + self.base_channel // self.alpha * self.t2s_mul,
-                        out_channel=self.base_channel)
-        self.mfm3 = MFM(in_channel=2 * self.base_channel + 2 * self.base_channel // self.alpha * self.t2s_mul,
-                        out_channel=2*self.base_channel)
-        self.mfm4 = MFM(in_channel=4 * self.base_channel + 4 * self.base_channel // self.alpha * self.t2s_mul,
-                        out_channel=4*self.base_channel)
+                out_channel=self.base_channel)
         self.init_params()
 
     def forward(self, x, laterals):
@@ -244,19 +230,7 @@ class LowRateBranch(ResNet18):
         x = torch.cat([x, laterals[0]], dim=1) # (b, 80, 30, 22, 22)
         x = self.layer1(x) # (b, 64, 30, 22, 22)
 
-        x = self.mfm2(laterals[1], x)
-        x = torch.cat([x, laterals[1]], dim=1) # (b, 80, 30, 22, 22)
-        x = self.layer2(x) # (b, 128, 30, 11, 11)
-
-        x = self.mfm3(laterals[2], x)
-        x = torch.cat([x, laterals[2]], dim=1) # (b, 160, 30, 11, 11)
-        x = self.layer3(x) # (2, 256, 30, 6, 6)
-
-        x = self.mfm4(laterals[3], x)
-        x = torch.cat([x, laterals[3]], dim=1) # (b, 320, 30, 6, 6)
-        x = self.layer4(x) # (b, 512, 30, 3, 3)
-
-        x = torch.cat([x, laterals[4]], dim=1) # (b, 640, 30, 3, 3)
+        x = torch.cat([x, laterals[1]], dim=1) # (b, 640, 30, 3, 3)
         x = self.avgpool(x) # (b, 640, 30, 1, 1)
 
         x = x.transpose(1, 2).contiguous() # (b, 30, 640, 1, 1)
@@ -271,7 +245,7 @@ class MultiBranchNet(nn.Module):
         super(MultiBranchNet, self).__init__()
         self.args = args
         self.low_rate_branch = LowRateBranch(block=BasicBlock,
-                                             layers=[2, 2, 2, 2],
+                                             layers=[2],
                                              se=args.se,
                                              in_channels=1,
                                              low_rate=1,
@@ -281,7 +255,7 @@ class MultiBranchNet(nn.Module):
                                              base_channel=args.base_channel)
 
         self.high_rate_branch = HighRateBranch(block=BasicBlock,
-                                               layers=[2, 2, 2, 2],
+                                               layers=[2],
                                                se=args.se,
                                                in_channels=1,
                                                low_rate=0,
@@ -295,15 +269,16 @@ class MultiBranchNet(nn.Module):
         y, laterals = self.high_rate_branch(y)
         x = self.low_rate_branch(x, laterals)
 
-        x = x.view(b, -1, 8*self.args.base_channel+8*self.args.base_channel//self.args.alpha*self.args.t2s_mul)
+        x = x.view(b, -1, 2*self.args.base_channel+2*self.args.base_channel//self.args.alpha*self.args.t2s_mul)
         return x
 
 
-class MSTP(nn.Module):
+class SimpleMSTP(nn.Module):
     def __init__(self, args, dropout=0.5):
-        super(MSTP, self).__init__()
+        super(SimpleMSTP, self).__init__()
         self.args = args
         self.mbranch = MultiBranchNet(args)
+        self.fc_proj = nn.Linear(192, 768)
         in_dim = 8 * args.base_channel + 8 * args.base_channel // self.args.alpha * self.args.t2s_mul
         self.gru = nn.GRU(in_dim, 1024, 3, batch_first=True, bidirectional=True, dropout=0.2)
         self.v_cls = nn.Linear(1024*2, self.args.n_class)
@@ -320,6 +295,7 @@ class MSTP(nn.Module):
             feat = self.mbranch(event_low, event_high)
             feat = feat.float()
 
+        feat = self.fc_proj(feat)
         feat, _ = self.gru(feat)
         logit = self.v_cls(self.dropout(feat)).mean(1)
 

@@ -80,6 +80,44 @@ def events_to_voxel_all(events, frame_nums, seq_len, num_bins, width, height, de
     voxel_grid_all[:voxel_len] = voxel_grid
     return voxel_grid_all
 
+def plot_voxel_grid_all(voxel_grid_all):
+    import matplotlib.pyplot as plt
+    # voxel_grid_all shape: [T, 1, H, W] => squeeze channel
+    voxel_grid_all = voxel_grid_all.squeeze(1)  # Now shape [T, H, W]
+
+    T, H, W = voxel_grid_all.shape
+
+    # Initialize lists for plotting
+    red_x, red_y = [], []
+    blue_x, blue_y = [], []
+    print(T)
+
+    for t in range(30):#T):
+        grid = voxel_grid_all[t]
+
+        # Where voxel value is significantly non-zero (you can tune the threshold)
+        y_coords, x_coords = np.where(np.abs(grid) > 0.1)
+        values = grid[y_coords, x_coords]
+
+        for x, y, val in zip(x_coords, y_coords, values):
+            if val > 0:
+                red_x.append(x)
+                red_y.append(y)
+            elif val < 0:
+                blue_x.append(x)
+                blue_y.append(y)
+        # break
+
+    plt.figure(figsize=(5, 5))
+    plt.scatter(red_x, red_y, color='red', label='Polarity +1', s=1)
+    plt.scatter(blue_x, blue_y, color='blue', label='Polarity -1', s=1)
+    plt.axis('off')             # Remove os eixos
+    plt.gca().set_frame_on(False)  # Remove a moldura
+    plt.subplots_adjust(left=0, right=1, top=1, bottom=0)  # Remove margem
+    plt.margins(0, 0)
+    plt.gca().invert_yaxis()
+    plt.show()
+
 class DVS_Lip(Dataset):
     def __init__(self, phase, args):
         self.labels = sorted(os.listdir(os.path.join(args.event_root, phase)))
@@ -88,6 +126,7 @@ class DVS_Lip(Dataset):
         self.args = args
 
         self.file_list = sorted(glob.glob(os.path.join(args.event_root, phase, '*', '*.npy')))
+        self.file_list = [x.replace("\\", "/") for x in self.file_list]
 
         with open('./data/frame_nums.json', 'r') as f:
             self.frame_nums = json.load(f)
@@ -110,8 +149,11 @@ class DVS_Lip(Dataset):
         events_input = np.stack([t, x, y, p], axis=-1)
 
         # convert events to voxel_grid
-        event_voxel_low = events_to_voxel_all(events_input, frame_num, self.length, self.args.num_bins[0], 96, 96, device='cpu') # (30*num_bins[0], 96, 96)
-        event_voxel_high = events_to_voxel_all(events_input, frame_num, self.length, self.args.num_bins[1], 96, 96, device='cpu') # (30*num_bins[1], 96, 96)
+        event_voxel_low = events_to_voxel_all(events_input, frame_num, self.length, 1, 96, 96, device='cpu') # (30*num_bins[0], 96, 96)
+        event_voxel_high = events_to_voxel_all(events_input, frame_num, self.length, 4, 96, 96, device='cpu') # (30*num_bins[1], 96, 96)
+        #plot_voxel_grid_all(event_voxel_high)
+        #plot_voxel_grid_all(event_voxel_low)
+        #exit()
 
         # data augmentation
         if self.phase == 'train':
