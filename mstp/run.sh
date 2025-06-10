@@ -5,25 +5,31 @@
 python main.py --gpus=0,1 --num_bins=1+4 --test=False --alpha=4 --beta=4 --batch_size=16 --num_workers=8 --log_dir=normal-no-compression
 
 # normal-distillation
-python main.py --gpus=0,1 --num_bins=1+4 --test=False --alpha=4 --beta=4 --batch_size=16 --num_workers=8 --log_dir=normal-distillation --distillation --teacher_weights=normal-no-compression
+python main.py --gpus=0,1 --num_bins=1+4 --test=False --alpha=4 --beta=4 --batch_size=16 --num_workers=8 --log_dir=normal-distillation --distillation --teacher_weights=normal-no-compression --d=0.02
+python main.py --gpus=0,1 --num_bins=1+4 --test=False --alpha=4 --beta=4 --batch_size=16 --num_workers=8 --log_dir=normal-distillation --distillation --teacher_weights=normal-no-compression --d=0.05
 
 # normal-prune
-python main.py --gpus=0,1 --num_bins=1+4 --test=False --alpha=4 --beta=4 --batch_size=16 --num_workers=8 --log_dir=normal-prune --prune --skip_train --weights=normal-no-compression
+python main.py --gpus=0,1 --num_bins=1+4 --test=False --alpha=4 --beta=4 --batch_size=16 --num_workers=8 --log_dir=normal-prune --prune --skip_train --weights=normal-no-compression --p=0.02
+python main.py --gpus=0,1 --num_bins=1+4 --test=False --alpha=4 --beta=4 --batch_size=16 --num_workers=8 --log_dir=normal-prune --prune --skip_train --weights=normal-no-compression --p=0.05
 
 # normal-distillation-prune
-python main.py --gpus=0,1 --num_bins=1+4 --test=False --alpha=4 --beta=4 --batch_size=16 --num_workers=8 --log_dir=normal-distillation-prune --distillation --teacher_weights=normal-no-compression --prune
+python main.py --gpus=0,1 --num_bins=1+4 --test=False --alpha=4 --beta=4 --batch_size=16 --num_workers=8 --log_dir=normal-distillation-prune --distillation --teacher_weights=normal-no-compression --prune --d=0.02 --p=0.02
+python main.py --gpus=0,1 --num_bins=1+4 --test=False --alpha=4 --beta=4 --batch_size=16 --num_workers=8 --log_dir=normal-distillation-prune --distillation --teacher_weights=normal-no-compression --prune --d=0.05 --p=0.05
 
 # simple-no-compression
 python main.py --gpus=0,1 --num_bins=1+4 --test=False --alpha=4 --beta=4 --batch_size=16 --num_workers=8 --log_dir=simple-no-compression --use_simple
 
 # simple-distillation
-python main.py --gpus=0,1 --num_bins=1+4 --test=False --alpha=4 --beta=4 --batch_size=16 --num_workers=8 --log_dir=simple-distillation --distillation --teacher_weights=normal-no-compression --use_simple
+python main.py --gpus=0,1 --num_bins=1+4 --test=False --alpha=4 --beta=4 --batch_size=16 --num_workers=8 --log_dir=simple-distillation --distillation --teacher_weights=normal-no-compression --use_simple --d=0.02
+python main.py --gpus=0,1 --num_bins=1+4 --test=False --alpha=4 --beta=4 --batch_size=16 --num_workers=8 --log_dir=simple-distillation --distillation --teacher_weights=normal-no-compression --use_simple --d=0.05
 
 # simple-prune
-python main.py --gpus=0,1 --num_bins=1+4 --test=False --alpha=4 --beta=4 --batch_size=16 --num_workers=8 --log_dir=simple-prune --prune --skip_train --weights=simple-no-compression --use_simple
+python main.py --gpus=0,1 --num_bins=1+4 --test=False --alpha=4 --beta=4 --batch_size=16 --num_workers=8 --log_dir=simple-prune --prune --skip_train --weights=simple-no-compression --use_simple --p=0.02
+python main.py --gpus=0,1 --num_bins=1+4 --test=False --alpha=4 --beta=4 --batch_size=16 --num_workers=8 --log_dir=simple-prune --prune --skip_train --weights=simple-no-compression --use_simple --p=0.05
 
 # simple-distillation-prune
-python main.py --gpus=0,1 --num_bins=1+4 --test=False --alpha=4 --beta=4 --batch_size=16 --num_workers=8 --log_dir=simple-distillation-prune --distillation --teacher_weights=normal-no-compression --prune --use_simple
+python main.py --gpus=0,1 --num_bins=1+4 --test=False --alpha=4 --beta=4 --batch_size=16 --num_workers=8 --log_dir=simple-distillation-prune --distillation --teacher_weights=normal-no-compression --prune --use_simple --d=0.02 --p=0.02
+python main.py --gpus=0,1 --num_bins=1+4 --test=False --alpha=4 --beta=4 --batch_size=16 --num_workers=8 --log_dir=simple-distillation-prune --distillation --teacher_weights=normal-no-compression --prune --use_simple --p=0.05 --p=0.05
 
 
 # RUN TEST
