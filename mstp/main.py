@@ -37,6 +37,8 @@ if(__name__ == "__main__"):
     parser.add_argument("--teacher_weights", type=str, required=False, default=None)
     parser.add_argument("--use_simple", action="store_true")
     parser.add_argument("--skip_train", action="store_true")
+    parser.add_argument("--d", type=int, default=0.02)
+    parser.add_argument("--p", type=int, default=0.02)
 
     # tests
     parser.add_argument("--reps", type=int, default=1)
@@ -75,7 +77,7 @@ if(__name__ == "__main__"):
                 if args.teacher_weights is None:
                     raise Exception("No weights for teacher net")
                 teacher_net = Net(args, device, weigths_path = args.teacher_weights, log_dir = None)
-                mstp_net = train_with_distillation(args, device, mstp_net, teacher_net)
+                mstp_net = train_with_distillation(args, device, mstp_net, teacher_net, args.d)
         if args.prune:
-            mstp_net = apply_pruning(args, device, mstp_net)
+            mstp_net = apply_pruning(args, device, mstp_net, args.p)
         print("Trained successfully.")

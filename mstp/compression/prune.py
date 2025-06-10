@@ -16,7 +16,7 @@ def adjust_state_dict(state_dict, model_is_dataparallel):
         new_state_dict[new_key] = value
     return new_state_dict
 
-def apply_pruning(args, device, net:Net, step=0.02):
+def apply_pruning(args, device, net:Net, p=0.02, step=0.02):
     amount = step
     best_amount = 0
     model_is_dataparallel = isinstance(net.net, torch.nn.DataParallel)
@@ -24,7 +24,7 @@ def apply_pruning(args, device, net:Net, step=0.02):
 
     with torch.no_grad():
         acc, _, _, _ = test(args, device, net)
-    acc_stop_threshold = acc - 0.02  # critério de parada: 2% ou 5% abaixo
+    acc_stop_threshold = acc - p  # critério de parada: 2% ou 5% abaixo
     net.logger.info(f"Acurácia inicial antes da poda: {acc:.4f} | Limite mínimo aluno: {acc_stop_threshold:.4f}")
 
     while amount < 1:

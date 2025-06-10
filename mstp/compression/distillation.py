@@ -8,7 +8,7 @@ from torch.amp import autocast, GradScaler
 from utils.net import Net
 
 
-def train_with_distillation(args, device, student_net: Net, teacher_net: Net):
+def train_with_distillation(args, device, student_net: Net, teacher_net: Net, d=0.02):
     dataset = DVS_Lip("train", args)
     student_net.logger.info(f"Start Training with Distillation, Data Length: {len(dataset)}")
     
