@@ -14,11 +14,17 @@ This work proposes and evaluates a neural network-based lip-reading system desig
 2. Baixe algum modelo pré-treinado em [modelos](https://drive.google.com/drive/folders/1xi9qoQ0LjEoo6SvWOH2pSXrdjia9_jJC?usp=sharing), e insira na pasta `log`.
 
 ## Treinamento
-```python main.py --gpus=0,1 --num_bins=1+4 --test=False --alpha=4 --beta=4 --batch_size=16 --num_workers=8 --log_dir=NOME_MODELO [--distillation] [--teacher_weights=NOME_PROFESSOR] [--prune] [--use_simple]```
+```
+python main.py --gpus=0,1 --num_bins=1+4 --test=False --alpha=4 --beta=4 --batch_size=16 --num_workers=8 --log_dir=NOME_MODELO [--distillation] [--teacher_weights=NOME_PROFESSOR] [--prune] [--use_simple]
+```
+
 Outros exemplos de comandos podem ser encontrados em `run.sh`.
 
 ## Teste
-```python main.py --gpus=0,1 --num_bins=1+4 --test=True --alpha=4 --beta=4 --batch_size=16 --num_workers=8 --reps=5 --weights=NOME_MODELO [--use_simple] [--use_profiler]```
+```
+python main.py --gpus=0,1 --num_bins=1+4 --test=True --alpha=4 --beta=4 --batch_size=16 --num_workers=8 --reps=5 --weights=NOME_MODELO [--use_simple] [--use_profiler]
+```
+
 Outros exemplos de comandos podem ser encontrados em `run.sh`.
 
 ## Plotings
