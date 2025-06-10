@@ -1,0 +1,44 @@
+C:\Users\User\Desktop\TCC\mstp>python main.py --gpus=0,1 --num_bins=1+4 --test=True --alpha=4 --beta=4 --batch_size=16 --num_workers=8 --weights=simple-prune2 --use_simple --use_profiler --reps=5
+Using device: cuda
+CUDA device name: NVIDIA GeForce RTX 3060 Laptop GPU
+CUDA version: 12.8
+cuDNN version: 90701
+loaded params/tot params:137/137
+miss matched params: []
+Testing...
+Starting test 1...
+Total iterations: 311
+Total parameters: 49,368,884
+Trainable parameters: 49,368,884
+311it [00:29, 10.67it/s]
+test acc: 0.67437, acc part1: 0.78445, acc part2: 0.56478, Total Params: 49,368,884, Trainable Params: 49,368,884, FLOPs per pass: 7.11e+10, Time spent: 44.35s, Peak GPU RAM: 548.40 MB
+Ended test 1
+Starting test 2...
+Total iterations: 311
+Total parameters: 49,368,884
+Trainable parameters: 49,368,884
+311it [00:30, 10.34it/s]
+test acc: 0.67437, acc part1: 0.78445, acc part2: 0.56478, Total Params: 49,368,884, Trainable Params: 49,368,884, FLOPs per pass: 7.11e+10, Time spent: 45.13s, Peak GPU RAM: 548.40 MB
+Ended test 2
+Starting test 3...
+Total iterations: 311
+Total parameters: 49,368,884
+Trainable parameters: 49,368,884
+311it [00:30, 10.36it/s]
+test acc: 0.67437, acc part1: 0.78445, acc part2: 0.56478, Total Params: 49,368,884, Trainable Params: 49,368,884, FLOPs per pass: 7.11e+10, Time spent: 45.40s, Peak GPU RAM: 548.40 MB
+Ended test 3
+Starting test 4...
+Total iterations: 311
+Total parameters: 49,368,884
+Trainable parameters: 49,368,884
+311it [00:29, 10.38it/s]
+test acc: 0.67437, acc part1: 0.78445, acc part2: 0.56478, Total Params: 49,368,884, Trainable Params: 49,368,884, FLOPs per pass: 7.11e+10, Time spent: 45.51s, Peak GPU RAM: 548.40 MB
+Ended test 4
+Starting test 5...
+Total iterations: 311
+Total parameters: 49,368,884
+Trainable parameters: 49,368,884
+311it [00:30, 10.34it/s]
+test acc: 0.67437, acc part1: 0.78445, acc part2: 0.56478, Total Params: 49,368,884, Trainable Params: 49,368,884, FLOPs per pass: 7.11e+10, Time spent: 45.26s, Peak GPU RAM: 548.40 MB
+Ended test 5
+Tested successfully.

@@ -10,25 +10,25 @@ This work proposes and evaluates a neural network-based lip-reading system desig
 * Pytorch 2.7.0
 
 ## Preparando ambiente...
-1. Baixe o *dataset* [DVS-Lip](https://drive.google.com/file/d/1dBEgtmctTTWJlWnuWxFtk8gfOdVVpkQ0/view), e insira na pasta `data`;
-2. Baixe algum modelo pré-treinado em [modelos](https://drive.google.com/drive/folders/1xi9qoQ0LjEoo6SvWOH2pSXrdjia9_jJC?usp=sharing), e insira na pasta `log`.
+1. Baixe o *dataset* [DVS-Lip](https://drive.google.com/file/d/1dBEgtmctTTWJlWnuWxFtk8gfOdVVpkQ0/view), e insira na pasta `mstp/data`;
+2. Baixe algum modelo pré-treinado em [modelos](https://drive.google.com/drive/folders/1xi9qoQ0LjEoo6SvWOH2pSXrdjia9_jJC?usp=sharing), e insira na pasta `mstp/log`.
 
 ## Treinamento
 ```
 python main.py --gpus=0,1 --num_bins=1+4 --test=False --alpha=4 --beta=4 --batch_size=16 --num_workers=8 --log_dir=NOME_MODELO [--distillation] [--teacher_weights=NOME_PROFESSOR] [--prune] [--use_simple]
 ```
 
-Outros exemplos de comandos podem ser encontrados em `run.sh`.
+Outros exemplos de comandos podem ser encontrados em `mstp/run.sh`.
 
 ## Teste
 ```
 python main.py --gpus=0,1 --num_bins=1+4 --test=True --alpha=4 --beta=4 --batch_size=16 --num_workers=8 --reps=5 --weights=NOME_MODELO [--use_simple] [--use_profiler]
 ```
 
-Outros exemplos de comandos podem ser encontrados em `run.sh`.
+Outros exemplos de comandos podem ser encontrados em `mstp/run.sh`.
 
 ## Plotings
-Na pasta `plotings` pode ser encontrado exemplos de códigos para plotagem dos dados.
+Na pasta `mstp/plotings` pode ser encontrado exemplos de códigos para plotagem dos dados.
 
 ## Referência
 Códigos baseados nos providos por [Tan et al. (2022)](https://github.com/tgc1997/event-based-lip-reading)

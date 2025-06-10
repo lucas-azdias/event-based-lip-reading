@@ -1,0 +1,44 @@
+C:\Users\User\Desktop\TCC\mstp>python main.py --gpus=0,1 --num_bins=1+4 --test=True --alpha=4 --beta=4 --batch_size=16 --num_workers=8 --weights=normal-no-compression --use_profiler --reps=5
+Using device: cuda
+CUDA device name: NVIDIA GeForce RTX 3060 Laptop GPU
+CUDA version: 12.8
+cuDNN version: 90701
+loaded params/tot params:402/402
+miss matched params: []
+Testing...
+Starting test 1...
+Total iterations: 311
+Total parameters: 62,310,484
+Trainable parameters: 62,310,484
+311it [00:35,  8.83it/s]
+test acc: 0.71337, acc part1: 0.82353, acc part2: 0.60369, Total Params: 62,310,484, Trainable Params: 62,310,484, FLOPs per pass: 1.36e+11, Time spent: 52.61s, Peak GPU RAM: 621.97 MB
+Ended test 1
+Starting test 2...
+Total iterations: 311
+Total parameters: 62,310,484
+Trainable parameters: 62,310,484
+311it [00:35,  8.70it/s]
+test acc: 0.71337, acc part1: 0.82353, acc part2: 0.60369, Total Params: 62,310,484, Trainable Params: 62,310,484, FLOPs per pass: 1.36e+11, Time spent: 55.72s, Peak GPU RAM: 621.97 MB
+Ended test 2
+Starting test 3...
+Total iterations: 311
+Total parameters: 62,310,484
+Trainable parameters: 62,310,484
+311it [00:37,  8.40it/s]
+test acc: 0.71337, acc part1: 0.82353, acc part2: 0.60369, Total Params: 62,310,484, Trainable Params: 62,310,484, FLOPs per pass: 1.36e+11, Time spent: 54.90s, Peak GPU RAM: 621.97 MB
+Ended test 3
+Starting test 4...
+Total iterations: 311
+Total parameters: 62,310,484
+Trainable parameters: 62,310,484
+311it [00:38,  8.18it/s]
+test acc: 0.71337, acc part1: 0.82353, acc part2: 0.60369, Total Params: 62,310,484, Trainable Params: 62,310,484, FLOPs per pass: 1.36e+11, Time spent: 56.99s, Peak GPU RAM: 621.97 MB
+Ended test 4
+Starting test 5...
+Total iterations: 311
+Total parameters: 62,310,484
+Trainable parameters: 62,310,484
+311it [00:37,  8.37it/s]
+test acc: 0.71337, acc part1: 0.82353, acc part2: 0.60369, Total Params: 62,310,484, Trainable Params: 62,310,484, FLOPs per pass: 1.36e+11, Time spent: 55.44s, Peak GPU RAM: 621.97 MB
+Ended test 5
+Tested successfully.
