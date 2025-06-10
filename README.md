@@ -11,11 +11,11 @@ This work proposes and evaluates a neural network-based lip-reading system desig
 
 ## Preparando ambiente...
 1. Baixe o *dataset* [DVS-Lip](https://drive.google.com/file/d/1dBEgtmctTTWJlWnuWxFtk8gfOdVVpkQ0/view), e insira na pasta `mstp/data`;
-2. Baixe algum modelo pré-treinado em [modelos](https://drive.google.com/drive/folders/1xi9qoQ0LjEoo6SvWOH2pSXrdjia9_jJC?usp=sharing), e insira na pasta `mstp/log`.
+2. Baixe algum modelo pré-treinado em [modelos](https://mega.nz/folder/ERYwka4S#3hc48xwLgeIA_AnW90qxgw), e insira na pasta `mstp/log`.
 
 ## Treinamento
 ```
-python main.py --gpus=0,1 --num_bins=1+4 --test=False --alpha=4 --beta=4 --batch_size=16 --num_workers=8 --log_dir=NOME_MODELO [--distillation] [--teacher_weights=NOME_PROFESSOR] [--prune] [--use_simple]
+python main.py --gpus=0,1 --num_bins=1+4 --test=False --alpha=4 --beta=4 --batch_size=16 --num_workers=8 --log_dir=NOME_MODELO [--distillation] [--teacher_weights=NOME_MODELO_PROFESSOR] [--prune] [--use_simple] [--d=VALOR] [--p=VALOR]
 ```
 
 Outros exemplos de comandos podem ser encontrados em `mstp/run.sh`.
